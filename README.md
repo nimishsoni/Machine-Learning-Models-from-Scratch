@@ -1,5 +1,5 @@
-**Decision Tree**
-**Files**:
+#**Decision Tree**
+##**Files**:
 
 **DecisionTree.py**:
 This file contains the implementation of the Decision Tree model from scratch.
@@ -10,7 +10,8 @@ Decision Tree: Responsible for building the decision tree.
 **applyDT.py**:
 This file leverages the Decision Tree model to train and predict outcomes.
 
-**Key Steps in DecisionTree Class**:
+##**Key Steps in DecisionTree Class**:
+
 **Input Parameters**:
 Get input parameters for growing a decision tree, such as the number of features to be used, maximum depth of the tree, and the minimum number of samples required for a node to be considered for splitting.
 
