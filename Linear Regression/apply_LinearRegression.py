@@ -12,7 +12,7 @@ fig = plt.figure(figsize=(8,6))
 plt.scatter(X[:, 0], y, color = "b", marker = "o", s = 30)
 plt.show()
 
-model = LinearRegression(lr=0.01)
+model = LinearRegression(lr=0.01, regularization = 'l2')
 model.fit(X_train,y_train)
 y_pred = model.predict(X_test)
 
