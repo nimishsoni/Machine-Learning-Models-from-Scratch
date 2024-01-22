@@ -4,7 +4,16 @@ class LinearRegression:
     """ Models the linear relationship between indeipendent features and dependent variable
     """
     def __init__(self, lr=0.001, n_iters = 1000, regularization = None, alpha = 0.01, decay_rate = 0.0001, early_stopping = False, patience = 10):
-        """ Method to Initialize the class parameters"""
+        """ Method to Initialize the class parameters
+         Parameters:
+        - lr: Learning rate for gradient descent.
+        - n_iters: Number of iterations for training.
+        - regularization: Type of regularization ('l1', 'l2', or None).
+        - alpha: Regularization strength.
+        - decay_rate: Learning rate decay rate for scheduling.
+        - early_stopping: Enable or disable early stopping.
+        - patience: Number of epochs with no improvement to wait for early stopping.
+        """
         self.learning_rate = lr 
         self.n_iters = n_iters
         self.weights = None
@@ -17,7 +26,12 @@ class LinearRegression:
         self.patience = patience
 
     def fit(self, X, y, val_set = None):
-        """This method is responsible for training the linear regression model."""
+        """This method is responsible for training the linear regression model.
+        Parameters:
+        - X: Input features.
+        - y: Target variable.
+        - val_set: Validation set for early stopping (tuple of X_val, y_val).
+        """
         n_samples, n_features = X.shape
         self.weights = np.zeros(n_features)
         self.bias = 0
@@ -74,6 +88,15 @@ class LinearRegression:
             self.bias = best_bias
         
     def predict(self, X):
+        """Make predictions using the trained model.
+
+        Parameters:
+        - X: Input features for prediction.
+
+        Returns:
+        - y_pred: Predicted values.
+        """
+
         y_pred = np.dot(X, self.weights) + self.bias
         return y_pred
 
