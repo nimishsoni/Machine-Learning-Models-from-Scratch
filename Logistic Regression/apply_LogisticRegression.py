@@ -15,7 +15,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 model = LogisticRegression(lr=0.01, regularization='l2', alpha=0.001, decay_rate=0.001, early_stopping=True, patience=25)
 
 # Train the Logistic Regression model on the training set and validate on the test set
-model.fit(X_train, y_train, val_set=(X_test, y_test))
+model.fit(X_train, y_train, X_val = X_test, y_val = y_test)
 
 # Make predictions on the test set using the trained model
 y_pred = model.predict(X_test)

@@ -36,7 +36,7 @@ class LogisticRegression:
         self.patience = patience
         self.training_loss = []
 
-    def fit(self, X, y, val_set=None):
+    def fit(self, X, y, X_val=None, y_val=None):
         """Train the logistic regression model.
 
         Args:
@@ -47,7 +47,7 @@ class LogisticRegression:
         n_sample, n_features = X.shape
         self.weights = np.zeros(n_features)
         self.bias = 0
-        best_accuracy = 0.0
+        best_val_loss = float('inf')
         best_weights = np.copy(self.weights)
         best_bias = self.bias
         patience_count = 0
@@ -72,13 +72,15 @@ class LogisticRegression:
             self.weights = self.weights - self.lr * (dW + reg_term)
             self.bias = self.bias - self.lr * dB
 
-            if self.early_stopping and val_set is not None:
-                val_pred = sigmoid(np.dot(val_set[0], self.weights) + self.bias)
-                val_class = [0 if y < 0.5 else 1 for y in val_pred]
-                val_accuracy = np.sum(val_class == val_set[1]) / len(val_set[1])
-                
-                if val_accuracy > best_accuracy:
-                    best_accuracy = val_accuracy
+            # Compute training loss
+            train_loss = self._compute_loss(X, y)
+            self.training_loss.append(train_loss)
+
+            # Early stopping
+            if self.early_stopping and X_val is not None and y_val is not None:
+                val_loss = self._compute_loss(X_val, y_val)
+                if val_loss < best_val_loss:
+                    best_val_loss = val_loss
                     best_weights = np.copy(self.weights)
                     best_bias = self.bias
                     patience_count = 0
@@ -103,5 +105,27 @@ class LogisticRegression:
         y_pred = sigmoid(np.dot(X, self.weights) + self.bias)
         y_class = [0 if y < 0.5 else 1 for y in y_pred]
         return y_class
+    
+    def _compute_loss(self, X, y):
+        """
+        Compute the logistic loss for the given input features and labels.
+
+        Parameters:
+        - X (numpy.ndarray): Input features, where each row represents a sample and each column a feature.
+        - y (numpy.ndarray): Actual labels corresponding to the input features.
+
+        Returns:
+        - float: Logistic loss calculated using cross-entropy for binary classification.
+
+        Notes:
+        - The loss is computed based on the sigmoid activation of linear predictions.
+        - Cross-entropy loss is used for binary classification, comparing predicted probabilities to actual labels.
+        - The loss is the negative mean of the sum of log probabilities for positive and negative classes.
+        """
+
+        linear_pred = np.dot(X, self.weights) + self.bias
+        y_pred = sigmoid(linear_pred)
+        loss = -np.mean(y * np.log(y_pred) + (1 - y) * np.log(1 - y_pred))
+        return loss
 
 
