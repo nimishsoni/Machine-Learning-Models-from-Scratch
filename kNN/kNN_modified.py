@@ -1,6 +1,6 @@
 import numpy as np
 from collections import Counter
-
+        
 class kNN:
     def __init__(self, k=3, distance_metric='euclidean', weights='uniform', standardize_features=True):
         """

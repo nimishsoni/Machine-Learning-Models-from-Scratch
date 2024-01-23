@@ -60,12 +60,12 @@ class kNN:
         Returns:
         - int: Predicted label.
         """
-        # Compute the distance
-        distances = [euclidean_distance(x, x_train) for x_train in self.X_train]
+        # Computes the Euclidean distance between the input data point x and all training data points in self.X_train
+        distances = [euclidean_distance(x, x_train) for x_train in self.X_train] 
 
-        # Get the closest k
-        k_indices = np.argsort(distances)[:self.k]
-        k_nearest_labels = [self.y_train[i] for i in k_indices]
+        # Get the closest k point labels
+        k_indices = np.argsort(distances)[:self.k] #argsort returns indices of points with k least distances
+        k_nearest_labels = [self.y_train[i] for i in k_indices] # Get labels corresponding to points with k least indices
 
         # Majority vote
         most_common = Counter(k_nearest_labels).most_common()
