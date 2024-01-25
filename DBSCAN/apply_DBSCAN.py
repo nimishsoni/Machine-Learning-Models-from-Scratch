@@ -10,7 +10,7 @@ def main():
 
     # Cluster the data using DBSCAN
     model = DBSCAN(eps=0.17, min_pts=5)
-    y_pred = model.predict(X)
+    y_pred = model.fit_predict(X)
 
     # Project the data onto the 2 primary principal components
     p = Plot()
