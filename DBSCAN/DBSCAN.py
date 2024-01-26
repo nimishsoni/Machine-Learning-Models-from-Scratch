@@ -18,7 +18,7 @@ class DBSCAN:
 
     def _get_neighbours(self, sample_i):
         """
-        Get neighboring points for a given sample.
+        Get neighboring points (within distance of eps) for a given sample.
 
         Parameters:
         - sample_i: Index of the sample for which neighbors need to be found.
@@ -35,27 +35,27 @@ class DBSCAN:
 
     def _expand_clusters(self, sample_i, neighbours):
         """
-        Expand a cluster starting from a seed sample.
+        Expand a cluster starting from a seed sample. Expansion should include all the possible core and border neighbours
 
         Parameters:
         - sample_i: Index of the seed sample.
         - neighbours: Array of indices of neighboring samples.
 
         Returns:
-        - cluster: List of indices representing the expanded cluster.
+        - cluster: List of indices having all the points from the expanded cluster.
         """
-        cluster = [sample_i]
+        cluster = [sample_i] # Initiate the new cluster with sample_i, then keep expanding as we find more neighbours
         for neighbour in neighbours:
             if neighbour not in self.visited_samples:
-                self.visited_samples.append(neighbour)
+                self.visited_samples.append(neighbour) 
 
-                self.neighbours[neighbour] = self._get_neighbours(neighbour)
+                self.neighbours[neighbour] = self._get_neighbours(neighbour) #Immediate neighbours assigned to the current (neighbour) point
 
-                if len(self.neighbours[neighbour]) >= self.min_pts:
-                    expanded_cluster = self._expand_clusters(neighbour, self.neighbours[neighbour])
-                    cluster += expanded_cluster
+                if len(self.neighbours[neighbour]) >= self.min_pts: # Checking if its a core neighbour
+                    expanded_cluster = self._expand_clusters(neighbour, self.neighbours[neighbour]) #If core neighbour then it is further expanded to include all points
+                    cluster += expanded_cluster #expanded cluster (list of indices of points) added to the present cluster
                 else:
-                    cluster.append(neighbour)
+                    cluster.append(neighbour) # If not a core neighbour, then only present neighbour appended to existing cluster
 
         return cluster
 
@@ -83,23 +83,26 @@ class DBSCAN:
         - cluster_labels: Array of cluster labels for each sample.
         """
         self.X = X
-        self.clusters = []
-        self.visited_samples = []
-        n_samples = self.X.shape[0]
-        self.neighbours = {}  # Dictionary containing mapping between a sample and its neighbours
+        self.clusters = [] # List containing 
+        self.visited_samples = [] # Running List of indices of samples already visited
+        n_samples = self.X.shape[0] 
+        self.neighbours = {}  # Dictionary containing mapping between a sample (as key) and its neighbours (as values)
 
-        for sample_i in range(n_samples):
-            if sample_i in self.visited_samples:
+        for sample_i in range(n_samples): # Looping over all the samples once 
+            if sample_i in self.visited_samples: 
                 continue
 
-            self.neighbours[sample_i] = self._get_neighbours(sample_i)
-
-            if len(self.neighbours[sample_i]) >= self.min_pts:
+            self.neighbours[sample_i] = self._get_neighbours(sample_i) # Find neighbours of sample_i within distance eps
+            
+            # Separate Cluster is always started from core points having neighbours > min_pts within distance of eps
+            if len(self.neighbours[sample_i]) >= self.min_pts: # Checking the condition for minimum number of points required to form dense region (or cluster)
                 self.visited_samples.append(sample_i)
+                # Once a core point is detected it will be expanded to include all the core + border neighbours
+                new_cluster = self._expand_clusters(sample_i, self.neighbours[sample_i]) # new cluster contains list of indices of all the neighbour points
 
-                new_cluster = self._expand_clusters(sample_i, self.neighbours[sample_i])
+                self.clusters.append(new_cluster)  # new cluster forms a new list within self.clusters
 
-                self.clusters.append(new_cluster)
-
+        # final cluster labels are assigned to the samples 
         cluster_labels = self._get_cluster_labels()
+        
         return cluster_labels
