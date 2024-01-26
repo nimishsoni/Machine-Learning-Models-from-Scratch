@@ -1,4 +1,6 @@
 import numpy as np
+import matplotlib.pyplot as plt
+
 
 class PCA:
     def __init__(self, n_components=2):
@@ -58,3 +60,23 @@ class PCA:
         """
         X = X - self.feature_mean
         return np.dot(X, self.components.T)
+    
+    def plot_loadings(self, feature_names=None):
+        """
+        Plot the loadings of principal components.
+
+        Parameters:
+        - feature_names (list or None): List of feature names (optional).
+        """
+        if feature_names is None:
+            feature_names = [f"Feature {i}" for i in range(1, len(self.components) + 1)]
+
+        plt.figure(figsize=(8, 6))
+        for i in range(len(self.components)):
+            plt.bar(feature_names, self.components[i], label=f"PC{i+1}")
+
+        plt.xlabel("Features")
+        plt.ylabel("Loadings")
+        plt.title("Loadings of Principal Components")
+        plt.legend()
+        plt.show()
