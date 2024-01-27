@@ -2,6 +2,12 @@
 
 This repository contains a Python implementation of Principal Component Analysis (PCA), a dimensionality reduction technique widely used in data science and machine learning.
 
+In PCA algorithm, we are interested in finding the principal components, which are directions in feature space along which the variation in the dataset is the most. 
+
+These principal components are eigen vectors of covariance matrix and their corresponding eigen values are magnitude of variance along those respective directions. 
+
+Eigen vectors with top k eigen values are selected as principal components. The goal is to find these principal components explaining most of the variations and reduce dimensionality of feature space. 
+
 **PCA.py**
 Introduction
 
