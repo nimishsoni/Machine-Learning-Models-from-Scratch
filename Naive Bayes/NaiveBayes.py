@@ -84,7 +84,6 @@ class GaussianNaiveBayes:
         var_cl = self._var[idx]
         numerator = np.exp(-(x - mean_cl) ** 2 / (2 * var_cl)) #1-D Array of size equal to n_features
         denominator = np.sqrt(2 * np.pi * var_cl) # Normalize the distribution
-        print(numerator, '\n', denominator, '\n', numerator/denominator)
         return numerator / denominator
 
     def plot_pdf(self, feature_index):
@@ -110,3 +109,45 @@ class GaussianNaiveBayes:
         plt.ylabel('Probability Density')
         plt.legend()
         plt.show()
+
+class MultinomialNaiveBayes(GaussianNaiveBayes):
+    def fit(self, X, y):
+        """
+        Fit the Multinomial Naive Bayes model to the training data.
+
+        Parameters:
+        - X (numpy.ndarray): 2D array representing input data.
+        - y (numpy.ndarray): 1D array representing target labels.
+        """
+        n_samples, n_features = X.shape
+        self._classes = np.unique(y)
+        n_classes = len(self._classes)
+
+        # Initialize arrays for class-wise feature counts and class priors
+        self._class_feature_counts = np.zeros((n_classes, n_features), dtype=np.float64)
+        self._class_counts = np.zeros(n_classes, dtype=np.float64)
+
+        # Update feature counts and class counts based on training data
+        for idx, cl in enumerate(self._classes):
+            X_cl = X[y == cl]
+            self._class_feature_counts[idx, :] = np.sum(X_cl, axis=0)
+            self._class_counts[idx] = X_cl.shape[0]
+
+    def _predict(self, x):
+        """
+        Predict the class label for a single input sample using Multinomial Naive Bayes.
+
+        Parameters:
+        - x (numpy.ndarray): Input sample.
+
+        Returns:
+        - predicted_class: Predicted class label for the input sample.
+        """
+        log_likelihoods = np.zeros(len(self._classes))
+
+        for idx, cl in enumerate(self._classes):
+            log_prior = np.log(self._class_counts[idx] / np.sum(self._class_counts))
+            log_likelihood = np.sum(x * np.log((self._class_feature_counts[idx] + 1) / (np.sum(self._class_feature_counts[idx]) + len(self._class_feature_counts[idx]))))
+            log_likelihoods[idx] = log_likelihood + log_prior
+
+        return self._classes[np.argmax(log_likelihoods)]
